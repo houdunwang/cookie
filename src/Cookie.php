@@ -26,7 +26,7 @@ class Cookie {
 	 *
 	 * @param string $key
 	 */
-	public function bootstrap( $key ) {
+	public function secureKey( $key ) {
 		$this->secureKey = $key;
 		if ( empty( $this->crypt ) ) {
 			$this->crypt = new Crypt();

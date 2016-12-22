@@ -19,9 +19,9 @@ composer require houdunwang/cookie
 $obj = new \houdunwang\cookie\Cookie();
 ```
 
-####加密密钥
+####设置密钥
 ```
-$obj->bootstrap('houdunwang.com');
+$obj->secureKey('houdunwang.com');
 ```
 
 ####设置

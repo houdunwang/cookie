@@ -1,5 +1,6 @@
 <?php
 require 'vendor/autoload.php';
 $obj = new \houdunwang\cookie\Cookie();
-$obj->bootstrap('houdunwang.com');
+//设置密钥
+$obj->secureKey('houdunwang.com');
 $obj->set('a',33);
