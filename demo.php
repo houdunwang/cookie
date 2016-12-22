@@ -1,6 +1,8 @@
 <?php
 require 'vendor/autoload.php';
-$obj = new \houdunwang\cookie\Cookie();
-//设置密钥
-$obj->secureKey('houdunwang.com');
-$obj->set('a',33);
+$config = [
+	//cookie加密密钥
+	'secureKey' => 'houdunwang88'
+];
+\houdunwang\config\Config::set( 'cookie', $config );
+\houdunwang\cookie\Cookie::set('a',33);
