@@ -9,7 +9,6 @@
  * '-------------------------------------------------------------------*/
 namespace houdunwang\cookie\build;
 
-use houdunwang\config\Config;
 use houdunwang\crypt\Crypt;
 
 /**
@@ -18,7 +17,12 @@ use houdunwang\crypt\Crypt;
  * @package hdphp\cookie
  */
 class Base {
-	protected $secureKey = '405305c793179059f8fd52436876750c587d19ccfbbe2a643743d021dbdcd79c';
+	protected $items = [ ];
+
+	public function __construct( $facade ) {
+		$this->facade = $facade;
+		$this->items  = $_COOKIE;
+	}
 
 	/**
 	 * 修改cookie加密密钥
@@ -37,8 +41,10 @@ class Base {
 	 * @return mixed
 	 */
 	public function get( $name ) {
-		if ( isset( $_COOKIE[ $name ] ) ) {
-			return Crypt::decrypt( $_COOKIE[ $name ], $this->secureKey );
+		if ( isset( $this->items[ $name ] ) ) {
+			return $this->items[ $name ];
+		} else if ( isset( $this->items[ $this->facade->config( 'prefix' ) . $name ] ) ) {
+			return Crypt::decrypt( $this->items[ $this->facade->config( 'prefix' ) . $name ], $this->facade->config( 'key' ) );
 		}
 	}
 
@@ -48,8 +54,8 @@ class Base {
 	 */
 	public function all() {
 		$data = [ ];
-		foreach ( $_COOKIE as $name => $value ) {
-			$data[ $name ] = self::get( $name );
+		foreach ( $this->items as $name => $value ) {
+			$data[ $name ] = $this->get( $name );
 		}
 
 		return $data;
@@ -66,7 +72,8 @@ class Base {
 	 */
 	public function set( $name, $value, $expire = 0, $path = '/', $domain = null ) {
 		$expire = $expire ? time() + $expire : $expire;
-		setcookie( $name, Crypt::encrypt( $value, $this->secureKey ), $expire, $path, $domain );
+		$name   = $this->facade->config( 'prefix' ) . $name;
+		setcookie( $name, Crypt::encrypt( $value, $this->facade->config( 'key' ) ), $expire, $path, $domain );
 	}
 
 	/**
@@ -88,7 +95,7 @@ class Base {
 	 * @return bool
 	 */
 	public function has( $name ) {
-		return isset( $_COOKIE[ $name ] );
+		return isset( $this->items[ $name ] );
 	}
 
 	/**
@@ -96,7 +103,7 @@ class Base {
 	 * @return bool
 	 */
 	public function flush() {
-		foreach ( $_COOKIE as $key => $value ) {
+		foreach ( $this->items as $key => $value ) {
 			setcookie( $key, '', 1 );
 		}
 

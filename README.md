@@ -13,10 +13,17 @@ composer require houdunwang/cookie
 ```
 > HDPHP 框架已经内置此组件，无需要安装
 
-####设置密钥
+####配置
 密钥是用来加密cookie数据使用的,随意更改会造成旧数据无法解密还原, 密钥长度最好为64位长度,数据会更安全。
+系统中有通过组件管理的COOKIE也会有通过其他方式设置的COOKIE, 为了区分需要设置 prefix 前缀用于区分。
 ```
-\houdunwang\cookie\Cookie::key( 'houdunwang');
+$config = [
+	//密钥
+	'key'    => '405305c793179059f8fd52436876750c587d19ccfbbe2a643743d021dbdcd79c',
+	//前缀
+	'prefix' => 'HOUDUNWANG##'
+];
+\houdunwang\config\Config::set( 'cookie', $config );
 ```
 
 ####设置
