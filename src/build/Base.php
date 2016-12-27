@@ -9,6 +9,7 @@
  * '-------------------------------------------------------------------*/
 namespace houdunwang\cookie\build;
 
+use houdunwang\arr\Arr;
 use houdunwang\crypt\Crypt;
 
 /**
@@ -18,19 +19,25 @@ use houdunwang\crypt\Crypt;
  */
 class Base {
 	protected $items = [ ];
+	protected $config;
 
-	public function __construct( $facade ) {
-		$this->facade = $facade;
+	public function __construct(  ) {
 		$this->items  = $_COOKIE;
 	}
 
-	/**
-	 * 修改cookie加密密钥
-	 *
-	 * @param $key
-	 */
-	public function key( $key ) {
-		$this->secureKey = $key;
+	//设置配置项
+	public function config( $config, $value = null ) {
+		if ( is_array( $config ) ) {
+			$this->config = $config;
+
+			return $this;
+		} else if ( is_null( $value ) ) {
+			return Arr::get( $this->config, $config );
+		} else {
+			$this->config = Arr::set( $this->config, $config, $value );
+
+			return $this;
+		}
 	}
 
 	/**
@@ -43,8 +50,8 @@ class Base {
 	public function get( $name ) {
 		if ( isset( $this->items[ $name ] ) ) {
 			return $this->items[ $name ];
-		} else if ( isset( $this->items[ $this->facade->config( 'prefix' ) . $name ] ) ) {
-			return Crypt::decrypt( $this->items[ $this->facade->config( 'prefix' ) . $name ], $this->facade->config( 'key' ) );
+		} else if ( isset( $this->items[ $this->config( 'prefix' ) . $name ] ) ) {
+			return Crypt::decrypt( $this->items[ $this->config( 'prefix' ) . $name ], $this->config( 'key' ) );
 		}
 	}
 
@@ -72,8 +79,8 @@ class Base {
 	 */
 	public function set( $name, $value, $expire = 0, $path = '/', $domain = null ) {
 		$expire = $expire ? time() + $expire : $expire;
-		$name   = $this->facade->config( 'prefix' ) . $name;
-		setcookie( $name, Crypt::encrypt( $value, $this->facade->config( 'key' ) ), $expire, $path, $domain );
+		$name   = $this->config( 'prefix' ) . $name;
+		setcookie( $name, Crypt::encrypt( $value, $this->config( 'key' ) ), $expire, $path, $domain );
 	}
 
 	/**

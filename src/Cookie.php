@@ -22,28 +22,10 @@ class Cookie {
 	protected $link;
 	protected $config;
 
-	public function __construct() {
-		$this->config( Config::get( 'cookie' ) );
-	}
-
-	//设置配置项
-	public function config( $config, $value = null ) {
-		if ( is_array( $config ) ) {
-			$this->config = $config;
-
-			return $this;
-		} else if ( is_null( $value ) ) {
-			return Arr::get( $this->config, $config );
-		} else {
-			$this->config = Arr::set( $this->config, $config, $value );
-
-			return $this;
-		}
-	}
-
 	//获取实例
 	protected function driver() {
-		$this->link = new Base($this);
+		$this->link = new Base();
+		$this->link->config( Config::get( 'cookie' ) );
 
 		return $this;
 	}
