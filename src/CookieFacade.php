@@ -9,9 +9,9 @@
  * '-------------------------------------------------------------------*/
 namespace houdunwang\cookie;
 
-use hdphp\kernel\ServiceFacade;
+use houdunwang\framework\build\Facade;
 
-class CookieFacade extends ServiceFacade {
+class CookieFacade extends Facade {
 	public static function getFacadeAccessor() {
 		return 'Cookie';
 	}

@@ -21,10 +21,6 @@ class Base {
 	protected $items = [ ];
 	protected $config;
 
-	public function __construct(  ) {
-		$this->items  = $_COOKIE;
-	}
-
 	//设置配置项
 	public function config( $config, $value = null ) {
 		if ( is_array( $config ) ) {
@@ -38,6 +34,9 @@ class Base {
 
 			return $this;
 		}
+	}
+	public function bootstrap(){
+		$this->items = $_COOKIE;
 	}
 
 	/**

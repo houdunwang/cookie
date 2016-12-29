@@ -9,20 +9,19 @@
  * '-------------------------------------------------------------------*/
 namespace houdunwang\cookie;
 
-use hdphp\kernel\ServiceProvider;
+use houdunwang\framework\build\Provider;
 
-class CookieProvider extends ServiceProvider {
+class CookieProvider extends Provider {
 
 	//延迟加载
-	public $defer = true;
+	public $defer = false;
 
 	public function boot() {
-		\Cookie::setSecureKey( c( 'app.key' ) );
 	}
 
 	public function register() {
-		$this->app->single( 'Cookie', function ( $app ) {
-			return new Cookie( $app );
+		$this->app->single( 'Cookie', function () {
+			return new Cookie();
 		} );
 	}
 }
