@@ -35,7 +35,8 @@ class Base {
 			return $this;
 		}
 	}
-	public function bootstrap(){
+
+	public function bootstrap() {
 		$this->items = $_COOKIE;
 	}
 
@@ -49,8 +50,8 @@ class Base {
 	public function get( $name ) {
 		if ( isset( $this->items[ $name ] ) ) {
 			return $this->items[ $name ];
-		} else if ( isset( $this->items[ $this->config( 'prefix' ) . $name ] ) ) {
-			return Crypt::decrypt( $this->items[ $this->config( 'prefix' ) . $name ], $this->config( 'key' ) );
+		} else if ( $this->has( $name ) ) {
+			return Crypt::decrypt( $this->items[ $this->config( 'prefix' ) . '##' . $name ], $this->config( 'key' ) );
 		}
 	}
 
@@ -78,8 +79,9 @@ class Base {
 	 */
 	public function set( $name, $value, $expire = 0, $path = '/', $domain = null ) {
 		$expire = $expire ? time() + $expire : $expire;
-		$name   = $this->config( 'prefix' ) . $name;
+		$name   = $this->config( 'prefix' ) . '##' . $name;
 		setcookie( $name, Crypt::encrypt( $value, $this->config( 'key' ) ), $expire, $path, $domain );
+
 	}
 
 	/**
@@ -101,7 +103,7 @@ class Base {
 	 * @return bool
 	 */
 	public function has( $name ) {
-		return isset( $this->items[ $name ] );
+		return isset( $this->items[ $this->config( 'prefix' ).'##' . $name ] );
 	}
 
 	/**

@@ -14,14 +14,14 @@ use houdunwang\framework\build\Provider;
 class CookieProvider extends Provider {
 
 	//延迟加载
-	public $defer = false;
+	public $defer = true;
 
 	public function boot() {
 	}
 
 	public function register() {
 		$this->app->single( 'Cookie', function () {
-			return new Cookie();
+			return Cookie::single();
 		} );
 	}
 }
