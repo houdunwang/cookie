@@ -25,11 +25,19 @@
     "houdunwang/crypt": "~1.0",
     "houdunwang/arr": "~1.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^6.1"
+  },
   "autoload": {
     "files": [
     ],
     "psr-4": {
       "houdunwang\\cookie\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "tests\\": "tests"
     }
   }
 }

@@ -10,8 +10,8 @@
 
 namespace houdunwang\cookie\build;
 
-use Config;
-use Crypt;
+use houdunwang\config\Config;
+use houdunwang\crypt\Crypt;
 
 /**
  * Cookie 管理组件
@@ -22,10 +22,13 @@ use Crypt;
 class Base
 {
     protected $items = [];
+    //前缀
+    protected $prefix;
 
     public function __construct()
     {
-        $this->items = $_COOKIE;
+        $this->items  = $_COOKIE;
+        $this->prefix = Config::get('cookie.prefix').'##';
     }
 
     /**
@@ -37,13 +40,8 @@ class Base
      */
     public function get($name)
     {
-        if (isset($this->items[$name])) {
-            return $this->items[$name];
-        } else if ($this->has($name)) {
-            return Crypt::decrypt(
-                $this->items[Config::get('cookie.prefix').'##'.$name],
-                Config::get('cookie.key')
-            );
+        if ($this->has($name)) {
+            return Crypt::decrypt($this->items[$this->prefix.$name]);
         }
     }
 
@@ -73,16 +71,19 @@ class Base
      */
     public function set($name, $value, $expire = 0, $path = '/', $domain = '')
     {
-        $expire = $expire ? time() + $expire : $expire;
-        $name   = Config::get('cookie.prefix').'##'.$name;
-        setcookie(
-            $name,
-            Crypt::encrypt($value, Config::get('cookie.key')),
-            $expire,
-            $path,
-            $domain
-        );
-
+        $name               = $this->prefix.$name;
+        $value              = Crypt::encrypt($value);
+        $this->items[$name] = $value;
+        $expire             = $expire ? time() + $expire : $expire;
+        if (PHP_SAPI != 'cli') {
+            setcookie(
+                $name,
+                $value,
+                $expire,
+                $path,
+                $domain
+            );
+        }
     }
 
     /**
@@ -94,7 +95,14 @@ class Base
      */
     public function del($name)
     {
-        return setcookie($name, '', 1);
+        if (isset($this->items[$this->prefix.$name])) {
+            unset($this->items[$this->prefix.$name]);
+        }
+        if (PHP_SAPI != 'cli') {
+            setcookie($name, '', 1);
+        }
+
+        return true;
     }
 
     /**
@@ -106,7 +114,7 @@ class Base
      */
     public function has($name)
     {
-        return isset($this->items[Config::get('cookie.prefix').'##'.$name]);
+        return isset($this->items[$this->prefix.$name]);
     }
 
     /**
@@ -116,8 +124,11 @@ class Base
      */
     public function flush()
     {
-        foreach ($this->items as $key => $value) {
-            setcookie($key, '', 1);
+        $this->items = [];
+        if (PHP_SAPI != 'cli') {
+            foreach ($this->items as $key => $value) {
+                setcookie($key, '', 1);
+            }
         }
 
         return true;
