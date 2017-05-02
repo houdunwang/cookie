@@ -127,7 +127,7 @@ class Base
         $this->items = [];
         if (PHP_SAPI != 'cli') {
             foreach ($this->items as $key => $value) {
-                setcookie($key, '', 1);
+                setcookie($key, '', 1, '/');
             }
         }
 
