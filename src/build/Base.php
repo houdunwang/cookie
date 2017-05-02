@@ -99,7 +99,7 @@ class Base
             unset($this->items[$this->prefix.$name]);
         }
         if (PHP_SAPI != 'cli') {
-            setcookie($name, '', 1);
+            setcookie($this->prefix.$name, '', 1);
         }
 
         return true;
