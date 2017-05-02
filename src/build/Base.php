@@ -28,7 +28,7 @@ class Base
     public function __construct()
     {
         $this->items  = $_COOKIE;
-        $this->prefix = Config::get('cookie.prefix').'##';
+        $this->prefix = (Config::get('cookie.prefix') ?: 'hdphp').'##';
     }
 
     /**
