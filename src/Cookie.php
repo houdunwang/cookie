@@ -7,6 +7,7 @@
  * |    WeChat: aihoudun
  * | Copyright (c) 2012-2019, www.houdunwang.com. All Rights Reserved.
  * '-------------------------------------------------------------------*/
+
 namespace houdunwang\cookie;
 
 use houdunwang\arr\Arr;
@@ -16,36 +17,34 @@ use houdunwang\cookie\build\Base;
 /**
  * Cookie 管理组件
  * Class Cookie
+ *
  * @package hdphp\cookie
  */
-class Cookie {
-	protected $link;
+class Cookie
+{
+    protected static $link;
 
-	//获取实例
-	protected function driver() {
-		$this->link = new Base();
+    public function __call($method, $params)
+    {
+        if (is_null(self::$link)) {
+            self::$link = new Base();
+        }
 
-		return $this;
-	}
+        return call_user_func_array([self::$link, $method], $params);
+    }
 
-	public function __call( $method, $params ) {
-		if ( is_null( $this->link ) ) {
-			$this->driver();
-		}
+    public static function single()
+    {
+        static $link;
+        if (is_null($link)) {
+            $link = new static();
+        }
 
-		return call_user_func_array( [ $this->link, $method ], $params );
-	}
+        return $link;
+    }
 
-	public static function single() {
-		static $link;
-		if ( is_null( $link ) ) {
-			$link = new static();
-		}
-
-		return $link;
-	}
-
-	public static function __callStatic( $name, $arguments ) {
-		return call_user_func_array( [ static::single(), $name ], $arguments );
-	}
+    public static function __callStatic($name, $arguments)
+    {
+        return call_user_func_array([static::single(), $name], $arguments);
+    }
 }
